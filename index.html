@@ -1,188 +1,451 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Upper / Lower Pro - Treino e Evolução</title>
-​<meta name="theme-color" content="#090d16">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Upper/Lower">
-​<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2548/2548414.png">
-<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2548/2548414.png">
-<link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22Upper%20Lower%20Pro%22%2C%22short_name%22%3A%22UpperLower%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23090d16%22%2C%22theme_color%22%3A%22%23090d16%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F2548%2F2548414.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
-​<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-​<script>
-tailwind.config = {
-darkMode: 'class',
-theme: {
-extend: {
-colors: {
-app: {
-bg: '#090d16',
-card: '#131b2e',
-border: '#1e293b',
-emerald: '#10b981',
-accent: '#38bdf8'
-}
-},
-fontFamily: { sans: ['Inter', 'sans-serif'] }
-}
-}
-}
-</script>
-<style>
-body { background-color: #090d16; color: #f8fafc; font-family: 'Inter', sans-serif; }
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #090d16; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
-.chart-box { position: relative; width: 100%; height: 280px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Pro - Treino, Nutrição & Evolução</title>
+    <!-- Chart.js para os Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text); padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; }
+        
+        header { text-align: center; margin-bottom: 24px; }
+        header h1 { color: var(--primary); font-size: 24px; font-weight: 800; }
+        header p { color: var(--text-light); font-size: 14px; margin-top: 4px; }
+
+        /* Abas */
+        .tabs {
+            display: flex;
+            background: #e2e8f0;
+            border-radius: 12px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 24px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--accent);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        h2 { font-size: 18px; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+        /* Dias da Semana */
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        @media(max-width: 768px) {
+            .days-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        .day-tab {
+            padding: 8px;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            color: var(--text-light);
+        }
+        .day-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* Tabelas e Inputs */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+        th { background: #f8fafc; color: var(--text-light); font-weight: 600; }
+        input, select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+        /* Miniatura Dinâmica de Execução */
+        .exec-img-container {
+            position: relative;
+            width: 52px;
+            height: 52px;
+        }
+        .exec-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            background: #f1f5f9;
+            transition: transform 0.2s;
+        }
+        .exec-img:hover {
+            transform: scale(2.2);
+            z-index: 10;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-danger { background: var(--danger); }
+        .btn-danger:hover { background: #dc2626; }
+        .mt-3 { margin-top: 16px; }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .stat-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-box span { font-size: 11px; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
+        .stat-box h3 { font-size: 18px; color: var(--primary); margin-top: 4px; }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col pb-28 antialiased selection:bg-emerald-500 selection:text-slate-950">
-​<!-- TOPO / CABEÇALHO -->
-<header class="bg-app-card border-b border-app-border sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-95">
-<div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-<div class="flex items-center gap-2.5">
-<div class="bg-emerald-500 p-2 rounded-xl text-slate-950 font-bold shadow-md flex items-center justify-center">
-<i class="fa-solid fa-dumbbell text-base"></i>
+<body>
+
+<div class="container">
+    <header>
+        <h1>⚡ Painel Pro - Treino & Nutrição</h1>
+        <p>Gestão de alta performance com demonstração visual inteligente de exercícios</p>
+    </header>
+
+    <!-- Navegação por Abas -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('treino')">🏋️ Treino</button>
+        <button class="tab-btn" onclick="switchTab('nutricao')">🥗 Alimentação</button>
+        <button class="tab-btn" onclick="switchTab('medidas')">⚖️ Peso & Medidas</button>
+        <button class="tab-btn" onclick="switchTab('relatorios')">📊 Relatórios</button>
+    </div>
+
+    <!-- ABA 1: TREINO -->
+    <div id="tab-treino" class="tab-content active">
+        <div class="card">
+            <h2>📅 Planejamento Semanal (7 Dias Editáveis)</h2>
+            <div class="days-grid" id="daysGrid"></div>
+            <h3 id="currentDayTitle" style="font-size:15px; color:var(--accent); margin: 16px 0 8px 0;">Treino de Segunda-feira</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:65px">Ref.</th>
+                        <th>Exercício (Mude para testar a imagem)</th>
+                        <th style="width:75px">Séries</th>
+                        <th style="width:95px">Repetições</th>
+                        <th style="width:95px">Carga (kg)</th>
+                        <th style="width:40px"></th>
+                    </tr>
+                </thead>
+                <tbody id="exerciseTableBody"></tbody>
+            </table>
+            <button class="btn mt-3" onclick="addExercise()">+ Adicionar Exercício</button>
+        </div>
+    </div>
+
+    <!-- ABA 2: NUTRIÇÃO -->
+    <div id="tab-nutricao" class="tab-content">
+        <div class="card">
+            <h2>🥗 Calculadora Nutricional Inteligente</h2>
+            <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">Digite qualquer alimento (ex: frango, arroz, aveia, ovos, pão...) e a quantidade em gramas.</p>
+            <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; align-items: end;">
+                <div>
+                    <label style="font-size:12px; font-weight:600;">Alimento</label>
+                    <input type="text" id="foodInput" placeholder="Ex: Peito de Frango">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600;">Qtd (g / ml)</label>
+                    <input type="number" id="foodAmount" value="150" min="1">
+                </div>
+                <button class="btn" onclick="addFoodItem()">Adicionar</button>
+            </div>
+
+            <h3 style="font-size:15px; margin:20px 0 10px 0;">Refeições Registradas Hoje:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Alimento</th>
+                        <th>Qtd</th>
+                        <th>Kcal</th>
+                        <th>Prot</th>
+                        <th>Carb</th>
+                        <th>Gord</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="mealsTableBody"></tbody>
+            </table>
+
+            <div class="stats-grid">
+                <div class="stat-box"><span>Calorias</span><h3 id="sumCal">0 kcal</h3></div>
+                <div class="stat-box"><span>Proteínas</span><h3 id="sumProt">0g</h3></div>
+                <div class="stat-box"><span>Carboidratos</span><h3 id="sumCarb">0g</h3></div>
+                <div class="stat-box"><span>Gorduras</span><h3 id="sumGord">0g</h3></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA 3: PESO & MEDIDAS -->
+    <div id="tab-medidas" class="tab-content">
+        <div class="card">
+            <h2>⚖️ Registro Corporal</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+                <div>
+                    <label style="font-size:12px; font-weight:600;">Data</label>
+                    <input type="date" id="measureDate">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600;">Peso Atual (kg)</label>
+                    <input type="number" id="measureWeight" step="0.1" placeholder="120.0">
+                </div>
+                <button class="btn" onclick="addMeasurement()">Salvar Peso</button>
+            </div>
+
+            <h3 style="font-size:15px; margin:20px 0 10px 0;">Histórico Registrado:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Peso</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="measurementsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ABA 4: RELATÓRIOS -->
+    <div id="tab-relatorios" class="tab-content">
+        <div class="card">
+            <h2>📊 Gráfico de Evolução de Peso</h2>
+            <div style="height: 250px;"><canvas id="weightChart"></canvas></div>
+        </div>
+        <div class="card">
+            <h2>📑 Relatório Completo de Refeições</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Alimento</th>
+                        <th>Qtd</th>
+                        <th>Calorias</th>
+                        <th>Proteínas</th>
+                        <th>Carboidratos</th>
+                        <th>Gorduras</th>
+                    </tr>
+                </thead>
+                <tbody id="reportMealsBody"></tbody>
+            </table>
+        </div>
+    </div>
 </div>
-<div>
-<h1 class="text-xs sm:text-sm font-extrabold tracking-wide text-white uppercase">
-Upper / Lower <span class="text-emerald-400">Pro</span>
-</h1>
-<p class="text-[11px] text-slate-400 font-medium">Meta: 118kg ➔ 112kg</p>
-</div>
-</div>
-​<!-- BOTÃO HOJE RÁPIDO -->
-<button type="button" onclick="goToToday()" class="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-<i class="fa-solid fa-calendar-day"></i> <span class="hidden sm:inline">Hoje</span>
-</button>
-</div>
-</header>
-​<!-- CONTEÚDO DINÂMICO -->
-<main class="max-w-4xl mx-auto px-4 py-4 flex-1 w-full space-y-4">
-​<!-- SEÇÃO 1: TREINOS -->
-<section id="view-workout" class="app-view space-y-4">
-<!-- SELETOR DE DIAS -->
-<div class="bg-app-card border border-app-border rounded-2xl p-3 shadow-md">
-<div class="flex items-center justify-between mb-2 px-1">
-<span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Cronograma Semanal</span>
-<span id="current-day-badge" class="text-[11px] font-bold text-emerald-400">Segunda-feira</span>
-</div>
-<div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5" id="days-bar"></div>
-</div>
-​<!-- DETALHES DO TREINO -->
-<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-4">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-app-border pb-3">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span id="workout-day-tag" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">SEGUNDA</span>
-<span id="workout-type-tag" class="text-xs text-slate-400 font-medium">Musculação</span>
-</div>
-<h2 id="workout-title" class="text-lg sm:text-xl font-extrabold text-white tracking-tight">UPPER A</h2>
-<p id="workout-subtitle" class="text-xs text-slate-400 mt-0.5">Peito, Costas, Ombros e Braços</p>
-</div>
-​<div class="bg-app-bg p-3 rounded-xl border border-app-border min-w-[150px]">
-<div class="flex justify-between items-center text-xs font-semibold mb-1">
-<span class="text-slate-400">Conclusão</span>
-<span id="prog-pct-txt" class="text-emerald-400 font-bold">0%</span>
-</div>
-<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-<div id="prog-bar-fill" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-300 w-0"></div>
-</div>
-</div>
-</div>
-​<div id="workout-orientations-box" class="bg-app-bg p-3 rounded-xl border border-app-border text-xs text-slate-300 space-y-1"></div>
-​<div>
-<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
-<i class="fa-solid fa-dumbbell text-emerald-400"></i> Exercícios & Cargas (Toque para Concluir)
-</h3>
-<div class="space-y-2.5" id="exercises-container"></div>
-</div>
-</div>
-</section>
-​<!-- SEÇÃO 2: DIÁRIO ALIMENTAR & IA -->
-<section id="view-diet" class="app-view hidden space-y-4">
-<!-- RESUMO MACROS -->
-<div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Calorias</span>
-<span id="macro-cal" class="text-base font-extrabold text-amber-400 mt-0.5 block">0 / 2000</span>
-</div>
-<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Proteína</span>
-<span id="macro-prot" class="text-base font-extrabold text-emerald-400 mt-0.5 block">0 / 160g</span>
-</div>
-<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Carbos</span>
-<span id="macro-carb" class="text-base font-extrabold text-sky-400 mt-0.5 block">0g</span>
-</div>
-<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Gordura</span>
-<span id="macro-fat" class="text-base font-extrabold text-teal-400 mt-0.5 block">0g</span>
-</div>
-<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm col-span-2 sm:col-span-1">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Sódio</span>
-<span id="macro-sod" class="text-base font-extrabold text-purple-400 mt-0.5 block">0mg</span>
-</div>
-</div>
-​<!-- FORMULÁRIO IA -->
-<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-3">
-<h3 class="text-sm font-bold text-white flex items-center gap-2">
-<i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Registrar Refeição com IA
-</h3>
-<p class="text-xs text-slate-400">Escreva o que comeu (ex: <span class="text-slate-300">"200g frango grelhado e 150g arroz"</span>):</p>
-​<form onsubmit="handleMealSubmit(event)" class="space-y-3">
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-<div>
-<label class="block text-[11px] font-semibold text-slate-400 mb-1">Data</label>
-<input type="date" id="meal-date" required class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
-</div>
-<div>
-<label class="block text-[11px] font-semibold text-slate-400 mb-1">Refeição</label>
-<select id="meal-name" class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
-<option value="Café da Manhã">Café da Manhã</option>
-<option value="Almoço" selected>Almoço</option>
-<option value="Lanche da Tarde">Lanche da Tarde</option>
-<option value="Jantar">Jantar</option>
-<option value="Ceia">Ceia / Extra</option>
-</select>
-</div>
-</div>
-<div>
-<textarea id="meal-desc" rows="2" required placeholder="Descreva os alimentos..." class="w-full bg-app-bg border border-app-border rounded-xl p-3 text-xs text-white resize-none"></textarea>
-</div>
-<div id="ai-loading" class="hidden items-center gap-2 p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
-<i class="fa-solid fa-circle-notch fa-spin"></i> Analisando macros com IA...
-</div>
-<button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">
-<i class="fa-solid fa-calculator"></i> Calcular e Adicionar Refeição
-</button>
-</form>
-</div>
-​<!-- LISTA DE REFEIÇÕES DO DIA -->
-<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-3">
-<div class="flex items-center justify-between border-b border-app-border pb-2">
-<h3 class="text-sm font-bold text-white flex items-center gap-2">
-<i class="fa-solid fa-list-ul text-emerald-400"></i> Refeições Registradas
-</h3>
-<input type="date" id="meal-filter-date" onchange="renderDietTab()" class="bg-app-bg border border-app-border rounded-lg px-2 py-1 text-xs text-white">
-</div>
-<div id="meals-list-container" class="space-y-2"></div>
-</div>
-</section>
-​<!-- SEÇÃO 3: PESO & MEDIDAS -->
-<section id="view-metrics" class="app-view hidden space-y-4">
-<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-3">
-<h3 class="text-sm font-bold text-white flex items-center gap-2">
-<i class="fa-solid fa-weight-scale text-emerald-400"></i> Registrar Peso e Cintura
-</h3>
-<form onsubmit="handleMetricSubmit(event)" class="space-y-3">
+
+<script>
+    const exerciseImageKeywords = {
+        'supino': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=150&auto=format&fit=crop&q=80',
+        'rosca': 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=150&auto=format&fit=crop&q=80',
+        'triceps': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=150&auto=format&fit=crop&q=80',
+        'extensora': 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=150&auto=format&fit=crop&q=80',
+        'flexora': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=150&auto=format&fit=crop&q=80',
+        'puxada': 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=150&auto=format&fit=crop&q=80',
+        'costas': 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=150&auto=format&fit=crop&q=80',
+        'ombro': 'https://images.unsplash.com/photo-1532029837206-abbe2b76ad0e?w=150&auto=format&fit=crop&q=80',
+        'agachamento': 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=150&auto=format&fit=crop&q=80',
+        'perna': 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=150&auto=format&fit=crop&q=80',
+        'cardio': 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=150&auto=format&fit=crop&q=80',
+        'abdomen': 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=150&auto=format&fit=crop&q=80'
+    };
+
+    function getDynamicExerciseImage(exerciseName) {
+        let lower = exerciseName.toLowerCase();
+        for (let keyword in exerciseImageKeywords) {
+            if (lower.includes(keyword)) {
+                return exerciseImageKeywords[keyword];
+            }
+        }
+        return 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=150&auto=format&fit=crop&q=80';
+    }
+
+    const foodDB = [
+        { keys: ['frango', 'peito'], name: 'Peito de Frango', cal: 159, p: 31, c: 0, g: 3.2 },
+        { keys: ['arroz'], name: 'Arroz Cozido', cal: 130, p: 2.5, c: 28, g: 0.2 },
+        { keys: ['ovo', 'ovos'], name: 'Ovo Cozido', cal: 143, p: 13, c: 0.8, g: 10 },
+        { keys: ['batata doce'], name: 'Batata Doce Cozida', cal: 77, p: 0.6, c: 18, g: 0.1 },
+        { keys: ['feijao', 'feijão'], name: 'Feijão Cozido', cal: 76, p: 4.8, c: 14, g: 0.5 },
+        { keys: ['patinho', 'carne moida'], name: 'Carne Moída (Patinho)', cal: 219, p: 35, c: 0, g: 8 },
+        { keys: ['aveia'], name: 'Aveia em Flocos', cal: 389, p: 16.9, c: 66, g: 6.9 },
+        { keys: ['pao', 'pão'], name: 'Pão Francês', cal: 265, p: 8, c: 58, g: 3.1 },
+        { keys: ['banana'], name: 'Banana Nanica', cal: 89, p: 1.1, c: 23, g: 0.3 }
+    ];
+
+    let currentDay = 'Segunda';
+    const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    
+    let workouts = JSON.parse(localStorage.getItem('pro_workouts')) || {
+        'Segunda': [{ name: 'Supino Reto', sets: 3, reps: '10', load: '60' }, { name: 'Rosca Direta', sets: 3, reps: '12', load: '25' }],
+        'Terça': [{ name: 'Cadeira Extensora', sets: 3, reps: '12', load: '40' }],
+        'Quarta': [{ name: 'Descanso / Livre', sets: 1, reps: '-', load: '-' }],
+        'Quinta': [{ name: 'Puxada Frontal', sets: 3, reps: '10', load: '50' }],
+        'Sexta': [{ name: 'Mesa Flexora', sets: 3, reps: '12', load: '35' }],
+        'Sábado': [{ name: 'Cardio + Abdômen', sets: 3, reps: '15', load: '-' }],
+        'Domingo': [{ name: 'Descanso / Livre', sets: 1, reps: '-', load: '-' }]
+    };
+
+    let meals = JSON.parse(localStorage.getItem('pro_meals')) || [
+        { name: 'Peito de Frango', amount: 150, cal: 239, p: 46.5, c: 0, g: 4.8 },
+        { name: 'Arroz Cozido', amount: 200, cal: 260, p: 5, c: 56, g: 0.4 }
+    ];
+
+    let measurements = JSON.parse(localStorage.getItem('pro_measurements')) || [
+        { date: '2026-11-01', weight: 121.5 },
+        { date: '2026-11-08', weight: 120.0 }
+    ];
+
+    let weightChartInstance = null;
+
+    function saveData() {
+        localStorage.setItem('pro_workouts', JSON.stringify(workouts));
+        localStorage.setItem('pro_meals', JSON.stringify(meals));
+        localStorage.setItem('pro_measurements', JSON.stringify(measurements));
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        if(tabId === 'relatorios') renderChartsAndReports();
+    }
+
+    function renderDaysNav() {
+        let grid = document.getElementById('daysGrid');
+        grid.innerHTML = '';
+        days.forEach(d => {
+            grid.innerHTML += `<div class="day-tab ${d === currentDay ? 'active' : ''}" onclick="selectDay('${d}')">${d}</div>`;
+        });
+    }
+
+    function selectDay(d) {
+        currentDay = d;
+        document.getElementById('currentDayTitle').innerText = 'Treino de ' + d + '-feira';
+        renderDaysNav();
+        renderWorkouts();
+    }
+
+    function renderWorkouts() {
+        let tbody = document.getElementById('exerciseTableBody');
+        tbody.innerHTML = '';
+        workouts[currentDay].forEach((ex, idx) => {
+            let imgSrc = getDynamicExerciseImage(ex.name);
+            tbody.innerHTML += `
+                <tr>
+                    <td>
+                        <div class="exec-img-container">
+                            <img src="${imgSrc}" class="exec-img" alt="Referência" title="Passe o mouse para ampliar">
+                        </div>
+                    </td>
+                    <td><input type="text" value="${ex.name}" oninput="updateExName(${idx}, this.value)" placeholder="Digite o exercício..."></td>
+                    <td><input type="number" value="${ex.sets}" onchange="updateExField(${idx}, 'sets', this.value)"></td>
+                    <td><input type="text" value="${ex.reps}" onchange="updateExField(${idx}, 'reps', this.value)"></td>
+                    <td><input type="text" value="${ex.load}" onchange="updateExField(${idx}, 'load', this.value)"></td>
+                    <td><button class="btn btn-danger" style="padding:6px 10px;" onclick="removeExercise(${idx})">X</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    function updateExName(idx, val) {
+        workouts[currentDay][idx].name = val;
+        let imgTag = document.querySelectorAll('.exec-img')[idx];
+        if(imgTag) {
+            imgTag.src = getDynamicExerciseImage(val);
+        }
+        saveData();
+    }
+
+    function updateExField(idx, field, val) {
+        workouts[currentDay][idx][field] = val;
+        saveData();
+    }
+
+    function addExercise() {
+        workouts[currentDay].push({ name: 'Novo Exercício', sets: 3, reps: '10', load: '0' });
+        saveData();
+        renderWorkouts();
+    }
+
+    function removeExercise(idx) {
+        workouts[currentDay].splice(idx, 1);
+        saveData();
+        renderWorkouts();
+    }
+
+    function addFoodItem() {
+        let query = document.getElementById('foodInput').value.toLowerCase().trim();
+        let amount
+lass="space-y-3">
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
 <div>
 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Data</label>

@@ -1,6 +1,6 @@
 <!-- Chosen Palette: Slate Dark & Emerald Fitness Theme -->
-<!-- Application Structure Plan: Designed as a 4-tab Single Page Application (Treino, Diário Alimentar IA, Relatório & Gráficos, Perfil & Backup). Fixed interaction bugs in day selector and view switching. -->
-<!-- Visualization & Content Choices: Multi-axis Chart.js for tracking body weight (kg) and waist circumference (cm) trends against daily calorie intake. HTML/CSS progress bars for daily macros. Custom FontAwesome Unicode icons and styled Tailwind components. NO SVG graphics or Mermaid JS used. -->
+<!-- Application Structure Plan: Fixed layout overflow and responsive positioning for mobile touch interaction. -->
+<!-- Visualization & Content Choices: Multi-axis Chart.js for tracking body weight (kg) and waist circumference (cm). NO SVG graphics used. NO Mermaid JS used. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 ​<!DOCTYPE html>
 <html lang="pt-BR" class="dark">
@@ -49,126 +49,318 @@ sans: ['Inter', 'sans-serif'],
 @media (min-width: 768px) { .chart-container { height: 380px; } }
 </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-green selection:text-slate-950">
-​<!-- HEADER NAVEGAÇÃO -->
-<header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-md">
-<div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-<div class="flex items-center gap-3">
-<div class="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20 text-slate-950">
-<i class="fa-solid fa-dumbbell text-xl"></i>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-green selection:text-slate-950 pb-16">
+​<!-- HEADER NAVEGAÇÃO SUPERIOR -->
+<header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+<div class="max-w-7xl mx-auto px-3 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
+<div class="flex items-center gap-2">
+<div class="bg-emerald-500 p-2 rounded-xl text-slate-950 font-bold shadow-md">
+<i class="fa-solid fa-dumbbell text-base"></i>
 </div>
 <div>
-<h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
-PROJECT <span class="text-emerald-400 font-black">UPPER / LOWER</span>
+<h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white flex items-center gap-1">
+PROJECT <span class="text-emerald-400">UPPER / LOWER</span>
 </h1>
-<p id="header-subtitle" class="text-xs text-slate-400 font-medium">Meta: 118kg ➔ 112kg</p>
+<p id="header-subtitle" class="text-[11px] text-slate-400">Meta: 118kg ➔ 112kg</p>
+</div>
 </div>
 </div>
 ​<!-- Abas de Navegação -->
-<div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-<button onclick="switchMainView('workout')" id="view-tab-workout" class="px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 border border-emerald-500/30">
-<i class="fa-solid fa-list-check"></i> <span class="hidden md:inline">Treino</span>
+<div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 w-full sm:w-auto justify-center overflow-x-auto">
+<button onclick="switchMainView('workout')" id="view-tab-workout" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 border border-emerald-500/30">
+<i class="fa-solid fa-list-check"></i> <span>Treino</span>
 </button>
-<button onclick="switchMainView('diet')" id="view-tab-diet" class="px-3 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 border border-transparent">
-<i class="fa-solid fa-utensils text-emerald-400"></i> <span class="hidden md:inline">Diário</span>
+<button onclick="switchMainView('diet')" id="view-tab-diet" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+<i class="fa-solid fa-utensils text-emerald-400"></i> <span>Diário</span>
 </button>
-<button onclick="switchMainView('report')" id="view-tab-report" class="px-3 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 border border-transparent">
-<i class="fa-solid fa-chart-line text-amber-400"></i> <span class="hidden md:inline">Relatório</span>
+<button onclick="switchMainView('report')" id="view-tab-report" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+<i class="fa-solid fa-chart-line text-amber-400"></i> <span>Relatório</span>
 </button>
-<button onclick="switchMainView('profile')" id="view-tab-profile" class="px-3 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 border border-transparent">
-<i class="fa-solid fa-user-gear text-sky-400"></i> <span class="hidden md:inline">Perfil</span>
+<button onclick="switchMainView('profile')" id="view-tab-profile" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+<i class="fa-solid fa-user-gear text-sky-400"></i> <span>Perfil</span>
 </button>
 </div>
 </div>
 </header>
 ​<!-- CONTAINER PRINCIPAL -->
-<main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
+<main class="max-w-7xl mx-auto px-3 py-4 flex-1 w-full flex flex-col gap-5">
 ​<!-- VISÃO 1: TREINO -->
-<div id="workout-view" class="space-y-6">
+<div id="workout-view" class="space-y-5">
 ​<!-- SELETOR DE DIAS DA SEMANA -->
 <section>
-<div class="flex items-center justify-between mb-3">
-<h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+<div class="flex items-center justify-between mb-2.5">
+<h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
 <i class="fa-regular fa-calendar-days text-emerald-400"></i> Selecione o Dia
 </h2>
 <button onclick="selectToday()" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1">
 <i class="fa-solid fa-location-crosshairs"></i> Hoje
 </button>
 </div>
-​<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2" id="day-buttons-container"></div>
+​<div class="grid grid-cols-4 sm:grid-cols-7 gap-2" id="day-buttons-container"></div>
 </section>
-​<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<div class="lg:col-span-2 space-y-6">
-<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-xl" id="day-header-card">
-<div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full filter blur-3xl pointer-events-none"></div>
-​<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+​<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+<div class="lg:col-span-2 space-y-5">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 relative overflow-hidden shadow-xl" id="day-header-card">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
 <div>
 <div class="flex items-center gap-2 mb-1">
 <span id="workout-day-tag" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SEGUNDA</span>
 <span id="workout-type-tag" class="text-xs text-slate-400 font-medium">Musculação</span>
 </div>
-<h2 id="workout-title" class="text-2xl font-extrabold text-white tracking-tight">UPPER A</h2>
-<p id="workout-subtitle" class="text-sm text-slate-400 mt-0.5">Peito, costas, ombros e braços</p>
+<h2 id="workout-title" class="text-xl font-extrabold text-white tracking-tight">UPPER A</h2>
+<p id="workout-subtitle" class="text-xs text-slate-400 mt-0.5">Peito, costas, ombros e braços</p>
 </div>
-​<div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 min-w-[180px]">
-<div class="flex justify-between items-center text-xs font-semibold mb-1.5">
+​<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 min-w-[160px]">
+<div class="flex justify-between items-center text-xs font-semibold mb-1">
 <span class="text-slate-400">Progresso</span>
 <span id="day-progress-percent" class="text-emerald-400">0%</span>
 </div>
-<div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-<div id="day-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 rounded-full transition-all duration-300 w-0"></div>
+<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+<div id="day-progress-bar" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-300 w-0"></div>
 </div>
 </div>
 </div>
-​<div class="mt-4">
-<h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+​<div class="mt-3">
+<h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1">
 <i class="fa-solid fa-circle-info text-emerald-400"></i> Orientações:
 </h4>
 <ul id="workout-orientations" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300"></ul>
 </div>
 </div>
 ​<!-- CHECKLIST DE EXERCÍCIOS -->
-<div class="space-y-3" id="exercises-container"></div>
+<div>
+<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+<i class="fa-solid fa-dumbbell text-emerald-400"></i> Exercícios do Dia & Cargas
+</h3>
+<div class="space-y-2.5" id="exercises-container"></div>
+</div>
 ​<!-- BANNER DO PROTOCOLO DE CARDIO -->
-<div id="cardio-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-<div class="flex items-center justify-between mb-4">
-<div class="flex items-center gap-3">
-<div class="bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20 text-amber-400">
-<i class="fa-solid fa-person-walking-arrow-right text-lg"></i>
+<div id="cardio-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2.5">
+<div class="bg-amber-500/10 p-2 rounded-xl border border-amber-500/20 text-amber-400">
+<i class="fa-solid fa-person-walking-arrow-right text-base"></i>
 </div>
 <div>
-<h3 class="text-base font-bold text-white">Protocolo de Cardio (Esteira Inclinada)</h3>
+<h3 class="text-sm font-bold text-white">Protocolo de Cardio (Esteira Inclinada)</h3>
 <p class="text-xs text-slate-400">30 Minutos • Pós-treino</p>
 </div>
 </div>
-<span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold px-2.5 py-1 rounded-full">3x/sem</span>
+<span class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold px-2 py-0.5 rounded-full">3x/sem</span>
 </div>
-​<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-<div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-center">
-<span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">1. Aquecimento</span>
-<span class="text-sm font-bold text-slate-200 block">5 min</span>
-<span class="text-xs text-emerald-400 font-semibold">4 km/h • 0% Inc</span>
+​<div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
+<span class="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">1. Aquecimento</span>
+<span class="text-xs font-bold text-slate-200 block">5 min</span>
+<span class="text-[11px] text-emerald-400 font-semibold">4 km/h • 0% Inc</span>
 </div>
-<div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-center">
-<span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">2. Caminhada I</span>
-<span class="text-sm font-bold text-slate-200 block">10 min</span>
-<span class="text-xs text-emerald-400 font-semibold">4.5 km/h • 2% Inc</span>
+<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
+<span class="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">2. Caminhada I</span>
+<span class="text-xs font-bold text-slate-200 block">10 min</span>
+<span class="text-[11px] text-emerald-400 font-semibold">4.5 km/h • 2% Inc</span>
 </div>
-<div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-center">
-<span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">3. Caminhada II</span>
-<span class="text-sm font-bold text-slate-200 block">10 min</span>
-<span class="text-xs text-emerald-400 font-semibold">4.5-5 km/h • 3-4%</span>
+<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
+<span class="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">3. Caminhada II</span>
+<span class="text-xs font-bold text-slate-200 block">10 min</span>
+<span class="text-[11px] text-emerald-400 font-semibold">4.5-5 km/h • 3-4%</span>
 </div>
-<div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-center">
-<span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">4. Desaceleração</span>
-<span class="text-sm font-bold text-slate-200 block">5 min</span>
-<span class="text-xs text-emerald-400 font-semibold">3.5-4 km/h • 0%</span>
+<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
+<span class="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">4. Desaceleração</span>
+<span class="text-xs font-bold text-slate-200 block">5 min</span>
+<span class="text-[11px] text-emerald-400 font-semibold">3.5-4 km/h • 0%</span>
 </div>
 </div>
 </div>
 ​<!-- REGISTRO CARDIO DESCANSO -->
-<div id="rest-cardio-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-<div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+<div id="rest-cardio-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+<div class="flex items-center gap-2.5">
+<div class="bg-sky-500/10 p-2 rounded-xl border border-sky-500/20 text-sky-400">
+<i class="fa-solid fa-person-walking text-base"></i>
+</div>
+<div>
+<h3 class="text-sm font-bold text-white">Cardio no Descanso / Opcional</h3>
+<p class="text-xs text-slate-400">Regeneração ativa</p>
+</div>
+</div>
+<span id="rest-cardio-badge" class="text-xs bg-slate-800 text-slate-400 border border-slate-700 font-bold px-2.5 py-0.5 rounded-full">Pendente</span>
+</div>
+​<form id="rest-cardio-form" onsubmit="saveRestCardio(event)" class="space-y-3">
+<div class="flex items-center gap-4">
+<span class="text-xs font-semibold text-slate-300">Fez cardio hoje?</span>
+<label class="inline-flex items-center cursor-pointer gap-1.5 text-xs text-slate-200">
+<input type="radio" name="rest_performed" value="yes" onchange="toggleRestCardioInputs(true)" checked class="accent-emerald-500"> Sim
+</label>
+<label class="inline-flex items-center cursor-pointer gap-1.5 text-xs text-slate-200">
+<input type="radio" name="rest_performed" value="no" onchange="toggleRestCardioInputs(false)" class="accent-red-500"> Não
+</label>
+</div>
+​<div id="rest-cardio-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Minutos</label>
+<input type="number" id="input-rest-time" min="1" max="180" placeholder="ex: 40" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Velocidade (km/h)</label>
+<input type="number" step="0.1" id="input-rest-speed" min="1" max="15" placeholder="ex: 4.5" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+</div>
+​<button type="submit" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5">
+<i class="fa-solid fa-floppy-disk"></i> Salvar Cardio
+</button>
+</form>
+</div>
+</div>
+​<!-- COLUNA DIREITA -->
+<div class="space-y-5">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
+<i class="fa-solid fa-weight-scale text-emerald-400"></i> Registrar Pesagem
+</h3>
+<p class="text-xs text-slate-400 mb-3">Atualize peso e cintura.</p>
+​<form id="metrics-form" onsubmit="saveMetric(event)" class="space-y-2.5">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Data</label>
+<input type="date" id="input-date" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Peso (kg)</label>
+<input type="number" step="0.1" id="input-weight" required placeholder="116.5" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Cintura (cm)</label>
+<input type="number" step="0.5" id="input-waist" required placeholder="105" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Obs / Treino</label>
+<input type="text" id="input-note" placeholder="Upper A Concluído" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+​<button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+<i class="fa-solid fa-plus"></i> Salvar Medição
+</button>
+</form>
+</div>
+​<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<h3 class="text-sm font-bold text-white mb-2.5 flex items-center gap-2">
+<i class="fa-solid fa-sliders text-emerald-400"></i> Parâmetros
+</h3>
+<ul class="space-y-2 text-xs text-slate-300">
+<li class="flex justify-between items-center border-b border-slate-800 pb-2">
+<span class="text-slate-400">Duração</span>
+<span class="font-semibold text-slate-200">60-90 min</span>
+</li>
+<li class="flex justify-between items-center border-b border-slate-800 pb-2">
+<span class="text-slate-400">Compostos</span>
+<span class="font-semibold text-emerald-400">90-120 seg</span>
+</li>
+<li class="flex justify-between items-center border-b border-slate-800 pb-2">
+<span class="text-slate-400">Isoladores</span>
+<span class="font-semibold text-slate-200">60-90 seg</span>
+</li>
+<li class="flex justify-between items-center">
+<span class="text-slate-400">Intensidade</span>
+<span class="font-semibold text-amber-400">1-3 RIR</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+​<!-- VISÃO 2: DIÁRIO ALIMENTAR -->
+<div id="diet-view" class="hidden space-y-5">
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Calorias</span>
+<span id="diet-today-calories" class="text-base font-extrabold text-amber-400 mt-0.5 block">0 / 2000</span>
+<div class="w-full bg-slate-950 rounded-full h-1 mt-1.5 overflow-hidden border border-slate-800">
+<div id="bar-today-calories" class="bg-amber-400 h-1 rounded-full w-0 transition-all"></div>
+</div>
+</div>
+<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Proteínas</span>
+<span id="diet-today-protein" class="text-base font-extrabold text-emerald-400 mt-0.5 block">0 / 160g</span>
+<div class="w-full bg-slate-950 rounded-full h-1 mt-1.5 overflow-hidden border border-slate-800">
+<div id="bar-today-protein" class="bg-emerald-400 h-1 rounded-full w-0 transition-all"></div>
+</div>
+</div>
+<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Carbos</span>
+<span id="diet-today-carbs" class="text-base font-extrabold text-sky-400 mt-0.5 block">0g</span>
+</div>
+<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Gorduras</span>
+<span id="diet-today-fats" class="text-base font-extrabold text-teal-400 mt-0.5 block">0g</span>
+</div>
+<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl col-span-2 sm:col-span-1">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Sódio</span>
+<span id="diet-today-sodium" class="text-base font-extrabold text-purple-400 mt-0.5 block">0mg</span>
+</div>
+</div>
+​<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+<div class="lg:col-span-2 space-y-5">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<h3 class="text-sm font-bold text-white mb-1.5 flex items-center gap-2">
+<i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Registrar Refeição com IA
+</h3>
+<p class="text-xs text-slate-400 mb-3">Ex: <span class="text-slate-300">"200g frango e 150g arroz"</span></p>
+​<form onsubmit="analyzeAndSaveMeal(event)" class="space-y-2.5">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Data</label>
+<input type="date" id="meal-date" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Refeição</label>
+<select id="meal-name" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+<option value="Café da Manhã">Café da Manhã</option>
+<option value="Almoço" selected>Almoço</option>
+<option value="Lanche da Tarde">Lanche da Tarde</option>
+<option value="Jantar">Jantar</option>
+<option value="Ceia">Ceia / Extra</option>
+</select>
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Horário</label>
+<input type="time" id="meal-time" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Alimentos</label>
+<textarea id="meal-text-input" rows="2" required placeholder="Descreva os alimentos..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white resize-none"></textarea>
+</div>
+<div id="ai-loading-state" class="hidden items-center gap-2 p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+<i class="fa-solid fa-circle-notch fa-spin"></i> Calculando com IA...
+</div>
+<button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-lg">
+<i class="fa-solid fa-calculator"></i> Calcular e Salvar Refeição
+</button>
+</form>
+</div>
+​<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+<h3 class="text-sm font-bold text-white flex items-center gap-2">
+<i class="fa-solid fa-list-ul text-emerald-400"></i> Refeições do Dia
+</h3>
+<input type="date" id="filter-meals-date" onchange="renderDietView()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white">
+</div>
+<div id="today-meals-list" class="space-y-2.5"></div>
+</div>
+</div>
+​<div class="space-y-5">
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+<h3 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+<i class="fa-solid fa-bullseye text-amber-400"></i> Metas Nutricionais
+</h3>
+<form onsubmit="saveDietGoals(event)" class="space-y-2.5">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Calorias (kcal)</label>
+<input type="number" id="goal-calories-input" min="1000" max="5000" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+</div>
+<div>
+<ate-800 pb-3">
 <div class="flex items-center gap-3">
 <div class="bg-sky-500/10 p-2.5 rounded-xl border border-sky-500/20 text-sky-400">
 <i class="fa-solid fa-person-walking text-lg"></i>

@@ -1,201 +1,330 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitSystem Pro — Dashboard Personal Fitness</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN -->
+  <title>FitSystem Pro - Dashboard Fitness</title>
+  
+  <!-- Manifesto PWA integrado para permitir instalação como App -->
+  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+    %22name%22: %22FitSystem Pro%22,
+    %22short_name%22: %22FitSystem%22,
+    %22start_url%22: %22./index.html%22,
+    %22display%22: %22standalone%22,
+    %22background_color%22: %22%230f172a%22,
+    %22theme_color%22: %22%230f172a%22,
+    %22icons%22: [{
+      %22src%22: %22https://cdn-icons-png.flaticon.com/512/2965/2965567.png%22,
+      %22sizes%22: %22512x512%22,
+      %22type%22: %22image/png%22
+    }]
+  }">
+  
+  <!-- Chart.js para gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts: Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0f9ff',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              700: '#0369a1',
-            },
-            dark: {
-              bg: '#0b0f19',
-              card: '#151c2c',
-              border: '#222f43',
-              input: '#1a2436'
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  
   <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #38bdf8;
+      --accent: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
     body {
-      background-color: #0b0f19;
-      color: #f8fafc;
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0; padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
     }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+    .app-header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; top: 0; z-index: 100;
     }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #151c2c;
+    .app-header h1 { margin: 0; font-size: 18px; color: var(--primary); font-weight: 700; }
+    .status-badge { font-size: 11px; color: var(--accent); background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); }
+    
+    .container { padding: 16px; max-width: 600px; margin: 0 auto 80px auto; }
+    
+    /* Grid de Métricas */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
     }
+    .metric-card h3 { margin: 0 0 6px 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-card .value { font-size: 20px; font-weight: 700; color: var(--text); }
+    .metric-card .sub { font-size: 11px; color: var(--accent); margin-top: 4px; }
+
+    /* Cartões */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+    }
+    .card h2 { margin-top: 0; font-size: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+
+    label { display: block; margin-top: 12px; font-weight: 600; font-size: 13px; color: var(--text-muted); }
+    input, select {
+      width: 100%; padding: 12px; margin-top: 6px;
+      background: #0f172a; border: 1px solid var(--border);
+      border-radius: 10px; box-sizing: border-box; font-size: 15px; color: var(--text);
+    }
+    input:focus, select:focus { outline: none; border-color: var(--primary); }
+
+    button.btn-primary {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      color: white; border: none; font-weight: bold; border-radius: 10px;
+      margin-top: 20px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+    button.btn-primary:active { opacity: 0.8; }
+
+    /* Histórico de Registros Recentes */
+    .history-list { margin-top: 10px; max-height: 180px; overflow-y: auto; }
+    .history-item { background: #0f172a; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; border: 1px solid #334155; }
+    .history-item span { color: var(--text-muted); font-size: 12px; }
+
+    /* Navegação Inferior */
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #1e293b; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; padding: 10px 0;
+      z-index: 1000; backdrop-filter: blur(10px);
+    }
+    .nav-item {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .nav-item.active { color: var(--primary); }
+    .nav-item span.icon { font-size: 20px; }
+
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row custom-scrollbar">
+<body>
 
-  <!-- Mobile Top Bar -->
-  <header class="md:hidden bg-dark-card border-b border-dark-border p-4 flex justify-between items-center sticky top-0 z-50">
-    <div class="flex items-center gap-2">
-      <div class="bg-gradient-to-tr from-brand-600 to-emerald-400 p-2 rounded-xl">
-        <i class="fa-solid fa-bolt text-white text-lg"></i>
-      </div>
-      <h1 class="font-bold text-lg text-white tracking-wide">FitSystem <span class="text-brand-500">Pro</span></h1>
-    </div>
-    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> GitHub Storage
-    </span>
-  </header>
+  <div class="app-header">
+    <h1>⚡ FitSystem Pro</h1>
+    <span class="status-badge" id="installStatus">Pronto p/ App</span>
+  </div>
 
-  <!-- Navigation Sidebar (Desktop & Mobile Bottom Bar) -->
-  <aside class="fixed md:static bottom-0 left-0 right-0 bg-dark-card/95 backdrop-blur-md md:backdrop-blur-none border-t md:border-t-0 md:border-r border-dark-border w-full md:w-64 z-50 flex md:flex-col justify-between p-2 md:p-6 transition-all duration-300">
-    <div>
-      <!-- Desktop Brand Logo -->
-      <div class="hidden md:flex items-center gap-3 mb-8 px-2">
-        <div class="bg-gradient-to-tr from-brand-600 to-emerald-400 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
-          <i class="fa-solid fa-bolt text-white text-xl"></i>
+  <div class="container">
+
+    <!-- ABA 1: DASHBOARD -->
+    <div id="tab-dash" class="tab-section active">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h3>Calorias Hoje</h3>
+          <div class="value" id="dashCal">0 kcal</div>
+          <div class="sub">Diário</div>
         </div>
-        <div>
-          <h1 class="font-bold text-xl text-white tracking-wide">FitSystem <span class="text-brand-500">Pro</span></h1>
-          <p class="text-xs text-gray-400">Personal Dashboard</p>
+        <div class="metric-card">
+          <h3>Proteínas Hoje</h3>
+          <div class="value" id="dashProt">0 g</div>
+          <div class="sub">Foco Hipertrofia</div>
+        </div>
+        <div class="metric-card">
+          <h3>Treinos Feitos</h3>
+          <div class="value" id="dashTreinos">0</div>
+          <div class="sub">Registrados</div>
+        </div>
+        <div class="metric-card">
+          <h3>Peso Atual</h3>
+          <div class="value">75.4 kg</div>
+          <div class="sub">Estável</div>
         </div>
       </div>
 
-      <!-- Navigation Links -->
-      <nav class="flex md:flex-col justify-around md:justify-start gap-1 md:gap-2">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-brand-500 bg-brand-500/10 border border-brand-500/20 w-full">
-          <i class="fa-solid fa-chart-pie text-base"></i>
-          <span>Visão Geral</span>
-        </button>
-        <button onclick="switchTab('workout')" id="nav-workout" class="nav-btn flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-dark-border/50 w-full">
-          <i class="fa-solid fa-dumbbell text-base"></i>
-          <span>Treinos</span>
-        </button>
-        <button onclick="switchTab('nutrition')" id="nav-nutrition" class="nav-btn flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-dark-border/50 w-full">
-          <i class="fa-solid fa-utensils text-base"></i>
-          <span>Nutrição</span>
-        </button>
-        <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-dark-border/50 w-full">
-          <i class="fa-solid fa-file-invoice text-base"></i>
-          <span>Relatórios</span>
-        </button>
-      </nav>
+      <div class="card">
+        <h2>📈 Resumo de Atividades</h2>
+        <canvas id="mainChart" width="400" height="200"></canvas>
+      </div>
     </div>
 
-    <!-- Desktop Footer Info -->
-    <div class="hidden md:block pt-6 border-t border-dark-border">
-      <div class="bg-dark-input p-3.5 rounded-xl border border-dark-border">
-        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
-          <span>Storage Status</span>
-          <span class="text-emerald-400 font-semibold">Local OK</span>
-        </div>
-        <div class="w-full bg-dark-bg rounded-full h-1.5">
-          <div class="bg-emerald-400 h-1.5 rounded-full" style="width: 100%"></div>
+    <!-- ABA 2: TREINOS -->
+    <div id="tab-treino" class="tab-section">
+      <div class="card">
+        <h2>🏋️ Registrar Treino</h2>
+        <label>Exercício</label>
+        <input type="text" id="exNome" placeholder="Ex: Supino Reto / Agachamento">
+        
+        <label>Carga Utilizada (kg)</label>
+        <input type="text" id="exCarga" placeholder="Ex: 82 kg">
+        
+        <button class="btn-primary" onclick="salvarTreino()">Salvar Treino</button>
+      </div>
+
+      <div class="card">
+        <h2>📋 Últimos Treinos</h2>
+        <div id="listaTreinos" class="history-list">
+          <div class="history-item">Nenhum treino registrado ainda.</div>
         </div>
       </div>
     </div>
-  </aside>
 
-  <!-- Main Content Area -->
-  <main class="flex-1 p-4 md:p-8 mb-16 md:mb-0 max-w-7xl mx-auto w-full">
-    
-    <!-- 1. DASHBOARD SECTION -->
-    <section id="sec-dashboard" class="space-y-6">
-      
-      <!-- Top Bar Greeting & Goals -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-dark-card to-dark-border/40 p-6 rounded-2xl border border-dark-border">
-        <div>
-          <h2 class="text-2xl font-bold text-white">Olá, Atleta! 👋</h2>
-          <p class="text-gray-400 text-sm mt-1">Acompanhe seu progresso e metas diárias em tempo real.</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <button onclick="openWeightModal()" class="px-4 py-2.5 bg-dark-input hover:bg-dark-border text-white text-sm font-medium rounded-xl border border-dark-border transition-all flex items-center gap-2">
-            <i class="fa-solid fa-weight-scale text-brand-500"></i> Registrar Peso
-          </button>
-        </div>
+    <!-- ABA 3: NUTRIÇÃO -->
+    <div id="tab-nutri" class="tab-section">
+      <div class="card">
+        <h2>🥗 Registrar Dieta</h2>
+        <label>Refeição / Alimento</label>
+        <input type="text" id="nutriRef" placeholder="Ex: Almoço / Frango e Arroz">
+        
+        <label>Calorias (kcal)</label>
+        <input type="number" id="nutriCal" placeholder="Ex: 500">
+        
+        <label>Proteínas (g)</label>
+        <input type="number" id="nutriProt" placeholder="Ex: 40">
+        
+        <button class="btn-primary" onclick="salvarNutricao()">Adicionar Refeição</button>
       </div>
 
-      <!-- Metrics Cards Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Card 1: Calorias -->
-        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Calorias Hoje</span>
-            <div class="p-2.5 bg-orange-500/10 rounded-xl text-orange-400">
-              <i class="fa-solid fa-fire text-lg"></i>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span id="dash-calories" class="text-3xl font-bold text-white">0</span>
-            <span class="text-sm text-gray-400">/ 2500 kcal</span>
-          </div>
-          <div class="w-full bg-dark-bg rounded-full h-2 mt-4 overflow-hidden">
-            <div id="dash-calories-bar" class="bg-gradient-to-r from-orange-500 to-amber-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
-          </div>
+      <div class="card">
+        <h2>📋 Refeições de Hoje</h2>
+        <div id="listaNutri" class="history-list">
+          <div class="history-item">Nenhuma refeição registrada hoje.</div>
         </div>
+      </div>
+    </div>
 
-        <!-- Card 2: Proteínas -->
-        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Proteínas Hoje</span>
-            <div class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400">
-              <i class="fa-solid fa-drumstick-bite text-lg"></i>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span id="dash-protein" class="text-3xl font-bold text-white">0</span>
-            <span class="text-sm text-gray-400">/ 160 g</span>
-          </div>
-          <div class="w-full bg-dark-bg rounded-full h-2 mt-4 overflow-hidden">
-            <div id="dash-protein-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
-          </div>
-        </div>
+  </div>
 
-        <!-- Card 3: Treinos Salvos -->
-        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Treinos Registrados</span>
-            <div class="p-2.5 bg-brand-500/10 rounded-xl text-brand-400">
-              <i class="fa-solid fa-dumbbell text-lg"></i>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <span id="dash-workouts-count" class="text-3xl font-bold text-white">0</span>
-            <span class="text-sm text-gray-400">sessões</span>
-          </div>
-          <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Atualizado em tempo real</p>
-        </div>
+  <!-- Barra de Navegação -->
+  <nav class="nav-bar">
+    <button class="nav-item active" onclick="switchTab('dash', this)">
+      <span class="icon">📊</span>Dashboard
+    </button>
+    <button class="nav-item" onclick="switchTab('treino', this)">
+      <span class="icon">🏋️</span>Treino
+    </button>
+    <button class="nav-item" onclick="switchTab('nutri', this)">
+      <span class="icon">🥗</span>Nutrição
+    </button>
+  </nav>
 
-        <!-- Card 4: Peso Atual -->
-        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Peso Corporal</span>
+  <script>
+    // Inicialização e Carregamento de Dados Locais
+    let dadosApp = JSON.parse(localStorage.getItem('fitsystem_data')) || { treinos: [], nutricao: [] };
+
+    window.onload = function() {
+      atualizarInterface();
+      initChart();
+    };
+
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function salvarTreino() {
+      const nome = document.getElementById('exNome').value;
+      const carga = document.getElementById('exCarga').value;
+      if (!nome || !carga) return alert('Preencha todos os campos!');
+
+      const novoTreino = { nome, carga, data: new Date().toLocaleDateString('pt-BR') };
+      dadosApp.treinos.unshift(novoTreino);
+      localStorage.setItem('fitsystem_data', JSON.stringify(dadosApp));
+
+      document.getElementById('exNome').value = '';
+      document.getElementById('exCarga').value = '';
+      alert('Treino salvo com sucesso!');
+      atualizarInterface();
+    }
+
+    function salvarNutricao() {
+      const ref = document.getElementById('nutriRef').value;
+      const cal = Number(document.getElementById('nutriCal').value);
+      const prot = Number(document.getElementById('nutriProt').value);
+      if (!ref || !cal || !prot) return alert('Preencha todos os campos!');
+
+      const novaNutri = { ref, cal, prot, data: new Date().toLocaleDateString('pt-BR') };
+      dadosApp.nutricao.unshift(novaNutri);
+      localStorage.setItem('fitsystem_data', JSON.stringify(dadosApp));
+
+      document.getElementById('nutriRef').value = '';
+      document.getElementById('nutriCal').value = '';
+      document.getElementById('nutriProt').value = '';
+      alert('Refeição salva com sucesso!');
+      atualizarInterface();
+    }
+
+    function atualizarInterface() {
+      // Métricas
+      document.getElementById('dashTreinos').innerText = dadosApp.treinos.length;
+
+      let totalCal = 0;
+      let totalProt = 0;
+      const hojeStr = new Date().toLocaleDateString('pt-BR');
+
+      let htmlNutri = '';
+      dadosApp.nutricao.forEach((item, idx) => {
+        if (item.data === hojeStr) {
+          totalCal += item.cal;
+          totalProt += item.prot;
+        }
+        htmlNutri += `<div class="history-item"><b>${item.ref}</b> <span>${item.cal} kcal | ${item.prot}g prot</span></div>`;
+      });
+
+      document.getElementById('dashCal').innerText = totalCal + ' kcal';
+      document.getElementById('dashProt').innerText = totalProt + ' g';
+      if(htmlNutri) document.getElementById('listaNutri').innerHTML = htmlNutri;
+
+      let htmlTreino = '';
+      dadosApp.treinos.forEach(item => {
+        htmlTreino += `<div class="history-item"><b>${item.nome}</b> <span>${item.carga} (${item.data})</span></div>`;
+      });
+      if(htmlTreino) document.getElementById('listaTreinos').innerHTML = htmlTreino;
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+          datasets: [{
+            label: 'Consumo Proteico (g)',
+            data: [140, 160, 155, 170, 165, 180, 175],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#f8fafc' } } },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>so Corporal</span>
             <div class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400">
               <i class="fa-solid fa-weight-scale text-lg"></i>
             </div>

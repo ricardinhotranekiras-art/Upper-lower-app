@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Projeto Upper / Lower - Treino & Evolução</title>
-​<meta name="theme-color" content="#0f172a">
+<title>Upper / Lower Pro - Treino e Evolução</title>
+​<meta name="theme-color" content="#090d16">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Upper/Lower">
 ​<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2548/2548414.png">
 <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2548/2548414.png">
-​<link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22Projeto%20Upper%20Lower%22%2C%22short_name%22%3A%22UpperLower%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F2548%2F2548414.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22Upper%20Lower%20Pro%22%2C%22short_name%22%3A%22UpperLower%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23090d16%22%2C%22theme_color%22%3A%22%23090d16%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F2548%2F2548414.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 ​<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,168 +22,344 @@ darkMode: 'class',
 theme: {
 extend: {
 colors: {
-brand: {
-green: '#10b981',
-neon: '#00ff87',
-dark: '#0f172a',
-card: '#1e293b',
+app: {
+bg: '#090d16',
+card: '#131b2e',
+border: '#1e293b',
+emerald: '#10b981',
 accent: '#38bdf8'
 }
 },
-fontFamily: {
-sans: ['Inter', 'sans-serif'],
-}
+fontFamily: { sans: ['Inter', 'sans-serif'] }
 }
 }
 }
 </script>
 <style>
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0f172a; }
+body { background-color: #090d16; color: #f8fafc; font-family: 'Inter', sans-serif; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #090d16; }
 ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
-.chart-container { position: relative; width: 100%; height: 300px; }
+.chart-box { position: relative; width: 100%; height: 280px; }
 </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased pb-24">
-​<!-- HEADER -->
-<header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
-<div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-<div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
-<div class="flex items-center gap-2">
-<div class="bg-emerald-500 p-2 rounded-xl text-slate-950 font-bold shadow-md">
+<body class="min-h-screen flex flex-col pb-28 antialiased selection:bg-emerald-500 selection:text-slate-950">
+​<!-- TOPO / CABEÇALHO -->
+<header class="bg-app-card border-b border-app-border sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-95">
+<div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="bg-emerald-500 p-2 rounded-xl text-slate-950 font-bold shadow-md flex items-center justify-center">
 <i class="fa-solid fa-dumbbell text-base"></i>
 </div>
 <div>
-<h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white">
-PROJECT <span class="text-emerald-400">UPPER / LOWER</span>
+<h1 class="text-xs sm:text-sm font-extrabold tracking-wide text-white uppercase">
+Upper / Lower <span class="text-emerald-400">Pro</span>
 </h1>
-<p class="text-[11px] text-slate-400">Meta: 118kg ➔ 112kg</p>
+<p class="text-[11px] text-slate-400 font-medium">Meta: 118kg ➔ 112kg</p>
 </div>
 </div>
-</div>
-​<!-- Abas de Navegação -->
-<div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 w-full sm:w-auto justify-center">
-<button type="button" onclick="switchMainView('workout')" id="tab-btn-workout" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 text-emerald-400 bg-emerald-500/10 border border-emerald-500/30">
-<i class="fa-solid fa-list-check"></i> <span>Treino</span>
+​<!-- BOTÃO HOJE RÁPIDO -->
+<button type="button" onclick="goToToday()" class="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+<i class="fa-solid fa-calendar-day"></i> <span class="hidden sm:inline">Hoje</span>
 </button>
-<button type="button" onclick="switchMainView('diet')" id="tab-btn-diet" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 border border-transparent">
-<i class="fa-solid fa-utensils text-emerald-400"></i> <span>Diário</span>
-</button>
-<button type="button" onclick="switchMainView('report')" id="tab-btn-report" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 border border-transparent">
-<i class="fa-solid fa-chart-line text-amber-400"></i> <span>Relatório</span>
-</button>
-<button type="button" onclick="switchMainView('profile')" id="tab-btn-profile" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 border border-transparent">
-<i class="fa-solid fa-user-gear text-sky-400"></i> <span>Perfil</span>
-</button>
-</div>
 </div>
 </header>
-​<!-- CONTAINER PRINCIPAL -->
-<main class="max-w-7xl mx-auto px-4 py-4 flex-1 w-full flex flex-col gap-5">
-​<!-- VISÃO 1: TREINO -->
-<section id="view-workout" class="space-y-4">
-<div>
-<div class="flex items-center justify-between mb-2">
-<h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-<i class="fa-regular fa-calendar-days text-emerald-400"></i> Selecione o Dia
-</h2>
-<button type="button" onclick="selectToday()" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300">
-<i class="fa-solid fa-location-crosshairs"></i> Hoje
-</button>
+​<!-- CONTEÚDO DINÂMICO -->
+<main class="max-w-4xl mx-auto px-4 py-4 flex-1 w-full space-y-4">
+​<!-- SEÇÃO 1: TREINOS -->
+<section id="view-workout" class="app-view space-y-4">
+<!-- SELETOR DE DIAS -->
+<div class="bg-app-card border border-app-border rounded-2xl p-3 shadow-md">
+<div class="flex items-center justify-between mb-2 px-1">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Cronograma Semanal</span>
+<span id="current-day-badge" class="text-[11px] font-bold text-emerald-400">Segunda-feira</span>
 </div>
-<div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5" id="day-buttons-container"></div>
+<div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5" id="days-bar"></div>
 </div>
-​<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-<div class="lg:col-span-2 space-y-4">
-<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+​<!-- DETALHES DO TREINO -->
+<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-app-border pb-3">
 <div>
 <div class="flex items-center gap-2 mb-1">
-<span id="w-day-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SEGUNDA</span>
-<span id="w-type-badge" class="text-xs text-slate-400 font-medium">Musculação</span>
+<span id="workout-day-tag" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">SEGUNDA</span>
+<span id="workout-type-tag" class="text-xs text-slate-400 font-medium">Musculação</span>
 </div>
-<h2 id="w-title" class="text-xl font-extrabold text-white tracking-tight">UPPER A</h2>
-<p id="w-subtitle" class="text-xs text-slate-400 mt-0.5">Peito, costas, ombros e braços</p>
+<h2 id="workout-title" class="text-lg sm:text-xl font-extrabold text-white tracking-tight">UPPER A</h2>
+<p id="workout-subtitle" class="text-xs text-slate-400 mt-0.5">Peito, Costas, Ombros e Braços</p>
 </div>
-​<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 min-w-[150px]">
+​<div class="bg-app-bg p-3 rounded-xl border border-app-border min-w-[150px]">
 <div class="flex justify-between items-center text-xs font-semibold mb-1">
-<span class="text-slate-400">Progresso</span>
-<span id="w-progress-txt" class="text-emerald-400 font-bold">0%</span>
+<span class="text-slate-400">Conclusão</span>
+<span id="prog-pct-txt" class="text-emerald-400 font-bold">0%</span>
 </div>
 <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-<div id="w-progress-bar" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-300 w-0"></div>
+<div id="prog-bar-fill" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-300 w-0"></div>
 </div>
 </div>
 </div>
-​<div class="mt-3">
-<h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1">
-<i class="fa-solid fa-circle-info text-emerald-400"></i> Orientações:
-</h4>
-<ul id="w-orientations" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300"></ul>
-</div>
-</div>
-​<!-- LISTA DE EXERCÍCIOS -->
-<div>
+​<div id="workout-orientations-box" class="bg-app-bg p-3 rounded-xl border border-app-border text-xs text-slate-300 space-y-1"></div>
+​<div>
 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
-<i class="fa-solid fa-dumbbell text-emerald-400"></i> Exercícios & Cargas
+<i class="fa-solid fa-dumbbell text-emerald-400"></i> Exercícios & Cargas (Toque para Concluir)
 </h3>
-<div class="space-y-2" id="exercises-list-container"></div>
+<div class="space-y-2.5" id="exercises-container"></div>
 </div>
 </div>
-​<!-- LATERAL TREINO -->
-<div class="space-y-4">
-<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-<h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
-<i class="fa-solid fa-weight-scale text-emerald-400"></i> Registrar Medição
+</section>
+​<!-- SEÇÃO 2: DIÁRIO ALIMENTAR & IA -->
+<section id="view-diet" class="app-view hidden space-y-4">
+<!-- RESUMO MACROS -->
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Calorias</span>
+<span id="macro-cal" class="text-base font-extrabold text-amber-400 mt-0.5 block">0 / 2000</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Proteína</span>
+<span id="macro-prot" class="text-base font-extrabold text-emerald-400 mt-0.5 block">0 / 160g</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Carbos</span>
+<span id="macro-carb" class="text-base font-extrabold text-sky-400 mt-0.5 block">0g</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Gordura</span>
+<span id="macro-fat" class="text-base font-extrabold text-teal-400 mt-0.5 block">0g</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm col-span-2 sm:col-span-1">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Sódio</span>
+<span id="macro-sod" class="text-base font-extrabold text-purple-400 mt-0.5 block">0mg</span>
+</div>
+</div>
+​<!-- FORMULÁRIO IA -->
+<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-3">
+<h3 class="text-sm font-bold text-white flex items-center gap-2">
+<i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Registrar Refeição com IA
 </h3>
-<p class="text-xs text-slate-400 mb-3">Peso e cintura do dia.</p>
-​<form onsubmit="saveMetricForm(event)" class="space-y-2.5">
+<p class="text-xs text-slate-400">Escreva o que comeu (ex: <span class="text-slate-300">"200g frango grelhado e 150g arroz"</span>):</p>
+​<form onsubmit="handleMealSubmit(event)" class="space-y-3">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 <div>
 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Data</label>
-<input type="date" id="metric-date" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+<input type="date" id="meal-date" required class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
 </div>
-<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Refeição</label>
+<select id="meal-name" class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
+<option value="Café da Manhã">Café da Manhã</option>
+<option value="Almoço" selected>Almoço</option>
+<option value="Lanche da Tarde">Lanche da Tarde</option>
+<option value="Jantar">Jantar</option>
+<option value="Ceia">Ceia / Extra</option>
+</select>
+</div>
+</div>
+<div>
+<textarea id="meal-desc" rows="2" required placeholder="Descreva os alimentos..." class="w-full bg-app-bg border border-app-border rounded-xl p-3 text-xs text-white resize-none"></textarea>
+</div>
+<div id="ai-loading" class="hidden items-center gap-2 p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold">
+<i class="fa-solid fa-circle-notch fa-spin"></i> Analisando macros com IA...
+</div>
+<button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">
+<i class="fa-solid fa-calculator"></i> Calcular e Adicionar Refeição
+</button>
+</form>
+</div>
+​<!-- LISTA DE REFEIÇÕES DO DIA -->
+<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-3">
+<div class="flex items-center justify-between border-b border-app-border pb-2">
+<h3 class="text-sm font-bold text-white flex items-center gap-2">
+<i class="fa-solid fa-list-ul text-emerald-400"></i> Refeições Registradas
+</h3>
+<input type="date" id="meal-filter-date" onchange="renderDietTab()" class="bg-app-bg border border-app-border rounded-lg px-2 py-1 text-xs text-white">
+</div>
+<div id="meals-list-container" class="space-y-2"></div>
+</div>
+</section>
+​<!-- SEÇÃO 3: PESO & MEDIDAS -->
+<section id="view-metrics" class="app-view hidden space-y-4">
+<div class="bg-app-card border border-app-border rounded-2xl p-4 shadow-xl space-y-3">
+<h3 class="text-sm font-bold text-white flex items-center gap-2">
+<i class="fa-solid fa-weight-scale text-emerald-400"></i> Registrar Peso e Cintura
+</h3>
+<form onsubmit="handleMetricSubmit(event)" class="space-y-3">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+<div>
+<label class="block text-[11px] font-semibold text-slate-400 mb-1">Data</label>
+<input type="date" id="metric-date" required class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
+</div>
 <div>
 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Peso (kg)</label>
-<input type="number" step="0.1" id="metric-weight" required placeholder="116.5" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+<input type="number" step="0.1" id="metric-weight" required placeholder="116.5" class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
 </div>
 <div>
 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cintura (cm)</label>
-<input type="number" step="0.5" id="metric-waist" required placeholder="105" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+<input type="number" step="0.5" id="metric-waist" required placeholder="105" class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
 </div>
 </div>
 <div>
 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Observação</label>
-<input type="text" id="metric-note" placeholder="Treino concluído" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+<input type="text" id="metric-note" placeholder="Ex: Jejum matinal" class="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-white">
 </div>
-<button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5">
+<button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">
 <i class="fa-solid fa-plus"></i> Salvar Medição
 </button>
 </form>
 </div>
+</section>
+​<!-- SEÇÃO 4: RELATÓRIOS & GRÁFICOS -->
+<section id="view-report" class="app-view hidden space-y-4">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Peso Inicial</span>
+<span class="text-base font-extrabold text-white mt-0.5 block">118.0 kg</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Peso Atual</span>
+<span id="rep-curr-w" class="text-base font-extrabold text-emerald-400 mt-0.5 block">--</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Eliminado</span>
+<span id="rep-loss-w" class="text-base font-extrabold text-amber-400 mt-0.5 block">--</span>
+</div>
+<div class="bg-app-card border border-app-border p-3 rounded-2xl shadow-sm">
+<span class="block text-[10px] font-bold uppercase text-slate-400">Menor Cintura</span>
+<span id="rep-waist" class="text-base font-extrabold text-teal-400 mt-0.5 block">--</span>
+</div>
+</div>
+​<div class="bg-app-card border border-app-border p-4 rounded-2xl shadow-xl space-y-3">
+<h3 class="text-sm font-bold text-white flex items-center gap-2">
+<i class="fa-solid fa-chart-line text-emerald-400"></i> Gráfico de Evolução Corporal
+</h3>
+<div class="chart-box"><canvas id="mainChart"></canvas></div>
+</div>
+​<div class="bg-app-card border border-app-border p-4 rounded-2xl shadow-xl space-y-3">
+<h3 class="text-sm font-bold text-white flex items-center gap-2">
+<i class="fa-solid fa-table text-emerald-400"></i> Histórico de Registros
+</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs text-slate-300">
+<thead class="text-[10px] text-slate-400 uppercase bg-app-bg border-b border-app-border">
+<tr>
+<th class="py-2 px-3">Data</th>
+<th class="py-2 px-3">Peso</th>
+<th class="py-2 px-3">Cintura</th>
+<th class="py-2 px-3">Calorias</th>
+<th class="py-2 px-3">Obs</th>
+</tr>
+</thead>
+<tbody id="history-tbody" class="divide-y divide-app-border"></tbody>
+</table>
 </div>
 </div>
 </section>
-​<!-- VISÃO 2: DIÁRIO ALIMENTAR -->
-<section id="view-diet" class="hidden space-y-4">
-<div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Calorias</span>
-<span id="diet-cal-txt" class="text-base font-extrabold text-amber-400 mt-0.5 block">0 / 2000</span>
+​</main>
+​<!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA (MOBILE FRIENDLY) -->
+<nav class="fixed bottom-0 left-0 right-0 bg-app-card border-t border-app-border z-50 shadow-2xl backdrop-blur-md bg-opacity-95">
+<div class="max-w-4xl mx-auto px-2 py-2 flex items-center justify-around">
+<button type="button" onclick="switchTab('workout')" id="nav-btn-workout" class="flex flex-col items-center gap-1 p-2 rounded-xl text-emerald-400 transition flex-1">
+<i class="fa-solid fa-dumbbell text-base"></i>
+<span class="text-[10px] font-bold">Treino</span>
+</button>
+<button type="button" onclick="switchTab('diet')" id="nav-btn-diet" class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-white transition flex-1">
+<i class="fa-solid fa-utensils text-base"></i>
+<span class="text-[10px] font-bold">Diário</span>
+</button>
+<button type="button" onclick="switchTab('metrics')" id="nav-btn-metrics" class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-white transition flex-1">
+<i class="fa-solid fa-weight-scale text-base"></i>
+<span class="text-[10px] font-bold">Medidas</span>
+</button>
+<button type="button" onclick="switchTab('report')" id="nav-btn-report" class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-white transition flex-1">
+<i class="fa-solid fa-chart-pie text-base"></i>
+<span class="text-[10px] font-bold">Relatório</span>
+</button>
 </div>
-<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Proteína</span>
-<span id="diet-prot-txt" class="text-base font-extrabold text-emerald-400 mt-0.5 block">0 / 160g</span>
-</div>
-<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Carbos</span>
-<span id="diet-carb-txt" class="text-base font-extrabold text-sky-400 mt-0.5 block">0g</span>
-</div>
-<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-<span class="block text-[10px] font-bold uppercase text-slate-400">Gorduras</span>
-<span id="diet-fat-txt" class="text-base font-extrabold text-teal-400 mt-0.5 block">0g</span>
-</div>
-<div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl col-span-2 sm:col-span-1">
+</nav>
+​<script>
+const workoutDb = {
+segunda: { name: "Segunda", title: "UPPER A", subtitle: "Peito, Costas, Ombros e Braços", isRest: false, ori: ["Pré-ativação no peck deck.", "Controlar excêntrica.", "Manter 1-3 RIR."], exs: [
+{ id: "uA_1", name: "Peck deck", sets: 2, reps: "15" },
+{ id: "uA_2", name: "Supino reto barra", sets: 3, reps: "8–12" },
+{ id: "uA_3", name: "Supino inclinado halteres", sets: 3, reps: "10–12" },
+{ id: "uA_4", name: "Puxada frontal", sets: 3, reps: "10–12" },
+{ id: "uA_5", name: "Remada baixa", sets: 3, reps: "10–12" },
+{ id: "uA_6", name: "Elevação lateral", sets: 3, reps: "12–15" },
+{ id: "uA_7", name: "Tríceps corda", sets: 2, reps: "12–15" },
+{ id: "uA_8", name: "Rosca direta", sets: 2, reps: "10–12" }
+]},
+terca: { name: "Terça", title: "LOWER A", subtitle: "Quadríceps, Posteriores, Glúteos", isRest: false, ori: ["Amplitude completa.", "Execução controlada."], exs: [
+{ id: "lA_1", name: "Cadeira extensora", sets: 3, reps: "12–15" },
+{ id: "lA_2", name: "Agachamento Smith", sets: 3, reps: "10–12" },
+{ id: "lA_3", name: "Leg press 45°", sets: 3, reps: "10–12" },
+{ id: "lA_4", name: "Mesa flexora", sets: 3, reps: "12–15" },
+{ id: "lA_5", name: "Cadeira abdutora", sets: 2, reps: "15" },
+{ id: "lA_6", name: "Panturrilha em pé", sets: 3, reps: "12–15" },
+{ id: "lA_7", name: "Abdominal máquina", sets: 3, reps: "15" }
+]},
+quarta: { name: "Quarta", title: "DESCANSO ATIVO", subtitle: "Recuperação", isRest: true, ori: ["Hidratação e descanso."], exs: [] },
+quinta: { name: "Quinta", title: "UPPER B", subtitle: "Costas, Peito, Ombros e Braços", isRest: false, ori: ["Coluna neutra.", "Foco na contração."], exs: [
+{ id: "uB_1", name: "Puxada neutra", sets: 3, reps: "10–12" },
+{ id: "uB_2", name: "Remada curvada", sets: 3, reps: "10–12" },
+{ id: "uB_3", name: "Supino declinado", sets: 3, reps: "10–12" },
+{ id: "uB_4", name: "Supino máquina", sets: 3, reps: "10–12" },
+{ id: "uB_5", name: "Crucifixo polia", sets: 2, reps: "12–15" },
+{ id: "uB_6", name: "Desenvolvimento máquina", sets: 2, reps: "10–12" },
+{ id: "uB_7", name: "Tríceps francês", sets: 2, reps: "12" },
+{ id: "uB_8", name: "Rosca martelo", sets: 2, reps: "12" }
+]},
+sexta: { name: "Sexta", title: "LOWER B", subtitle: "Posteriores, Quadríceps, Glúteos", isRest: false, ori: ["Estabilidade no stiff."], exs: [
+{ id: "lB_1", name: "Mesa flexora", sets: 3, reps: "12" },
+{ id: "lB_2", name: "Stiff com halteres", sets: 3, reps: "10–12" },
+{ id: "lB_3", name: "Leg press", sets: 3, reps: "12" },
+{ id: "lB_4", name: "Cadeira extensora", sets: 2, reps: "12–15" },
+{ id: "lB_5", name: "Elevação pélvica", sets: 3, reps: "10–12" },
+{ id: "lB_6", name: "Panturrilha sentado", sets: 3, reps: "15" },
+{ id: "lB_7", name: "Abdominal infra", sets: 3, reps: "12–15" }
+]},
+sabado: { name: "Sábado", title: "CARDIO + ABD", subtitle: "Opcional", isRest: false, ori: ["Ritmo constante."], exs: [
+{ id: "sab_1", name: "Caminhada esteira", sets: 1, reps: "35 min" },
+{ id: "sab_2", name: "Abdominal máquina", sets: 3, reps: "15" },
+{ id: "sab_3", name: "Prancha", sets: 3, reps: "40 seg" }
+]},
+domingo: { name: "Domingo", title: "DESCANSO TOTAL", subtitle: "Recuperação", isRest: true, ori: ["Descanso."], exs: [] }
+};
+​let currentDayKey = 'segunda';
+let completedExercises = JSON.parse(localStorage.getItem('ul_completed')) || {};
+let exerciseLoads = JSON.parse(localStorage.getItem('ul_loads')) || {};
+let metricsList = JSON.parse(localStorage.getItem('ul_metrics')) || [{ date: "2026-11-01", weight: 118.0, waist: 115.0, note: "Início" }];
+let mealsList = JSON.parse(localStorage.getItem('ul_meals')) || [];
+let dietGoals = { calories: 2000, protein: 160 };
+let chartInstance = null;
+const dayKeysOrder = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+​window.addEventListener('DOMContentLoaded', () => {
+const todayISO = new Date().toISOString().split('T')[0];
+document.getElementById('metric-date').value = todayISO;
+document.getElementById('meal-date').value = todayISO;
+document.getElementById('meal-filter-date').value = todayISO;
+​renderDayButtons();
+goToToday();
+});
+​function switchTab(tabId) {
+['workout', 'diet', 'metrics', 'report'].forEach(id => {
+document.getElementById(view-${id}).classList.add('hidden');
+const btn = document.getElementById(nav-btn-${id});
+btn.className = "flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-white transition flex-1";
+});
+document.getElementById(view-${tabId}).classList.remove('hidden');
+const activeBtn = document.getElementById(nav-btn-${tabId});
+activeBtn.className = "flex flex-col items-center gap-1 p-2 rounded-xl text-emerald-400 transition flex-1 bg-emerald-500/10";
+​if (tabId === 'diet') renderDietTab();
+if (tabId === 'report') renderReportTab();
+}
+​function goToToday() {
+const idx = new Date().getDay();
+const map = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+loadDayWorkout(map[idx]);
+switchTab('workout');
+}
+​function renderDayButtons() {
+const container = document.getElementById('days-bar');
+cocol-span-2 sm:col-span-1">
 <span class="block text-[10px] font-bold uppercase text-slate-400">Sódio</span>
 <span id="diet-sod-txt" class="text-base font-extrabold text-purple-400 mt-0.5 block">0mg</span>
 </div>

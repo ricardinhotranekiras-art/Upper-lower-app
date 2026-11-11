@@ -1,266 +1,375 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Pro - Treino, Nutrição & Evolução</title>
-    <!-- Chart.js para os Gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-main: #f8fafc;
-            --card-bg: #ffffff;
-            --primary: #0f172a;
-            --accent: #2563eb;
-            --accent-hover: #1d4ed8;
-            --success: #10b981;
-            --danger: #ef4444;
-            --text: #334155;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text); padding: 20px; }
-        .container { max-width: 950px; margin: 0 auto; }
-        
-        header { text-align: center; margin-bottom: 24px; }
-        header h1 { color: var(--primary); font-size: 24px; font-weight: 800; }
-        header p { color: var(--text-light); font-size: 14px; margin-top: 4px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitSystem Pro — Dashboard Personal Fitness</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        /* Abas */
-        .tabs {
-            display: flex;
-            background: #e2e8f0;
-            border-radius: 12px;
-            padding: 4px;
-            gap: 4px;
-            margin-bottom: 24px;
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            },
+            dark: {
+              bg: '#0b0f19',
+              card: '#151c2c',
+              border: '#222f43',
+              input: '#1a2436'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
         }
-        .tab-btn {
-            flex: 1;
-            padding: 12px 8px;
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--text-light);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        .tab-btn.active {
-            background: var(--card-bg);
-            color: var(--accent);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
-        h2 { font-size: 18px; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-
-        /* Dias da Semana */
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-        @media(max-width: 768px) {
-            .days-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-        .day-tab {
-            padding: 8px;
-            background: #f1f5f9;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            color: var(--text-light);
-        }
-        .day-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-        /* Tabelas e Inputs */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
-        th { background: #f8fafc; color: var(--text-light); font-weight: 600; }
-        input, select {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 13px;
-            outline: none;
-            background: #fff;
-        }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-
-        /* Miniatura Dinâmica de Execução */
-        .exec-img-container {
-            position: relative;
-            width: 52px;
-            height: 52px;
-        }
-        .exec-img {
-            width: 52px;
-            height: 52px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--border);
-            background: #f1f5f9;
-            transition: transform 0.2s;
-        }
-        .exec-img:hover {
-            transform: scale(2.2);
-            z-index: 10;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-        }
-
-        .btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: background 0.2s;
-        }
-        .btn:hover { background: var(--accent-hover); }
-        .btn-danger { background: var(--danger); }
-        .btn-danger:hover { background: #dc2626; }
-        .mt-3 { margin-top: 16px; }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .stat-box {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 14px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .stat-box span { font-size: 11px; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
-        .stat-box h3 { font-size: 18px; color: var(--primary); margin-top: 4px; }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #151c2c;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col md:flex-row custom-scrollbar">
 
-<div class="container">
-    <header>
-        <h1>⚡ Painel Pro - Treino & Nutrição</h1>
-        <p>Gestão de alta performance com demonstração visual inteligente de exercícios</p>
-    </header>
-
-    <!-- Navegação por Abas -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('treino')">🏋️ Treino</button>
-        <button class="tab-btn" onclick="switchTab('nutricao')">🥗 Alimentação</button>
-        <button class="tab-btn" onclick="switchTab('medidas')">⚖️ Peso & Medidas</button>
-        <button class="tab-btn" onclick="switchTab('relatorios')">📊 Relatórios</button>
+  <!-- Mobile Top Bar -->
+  <header class="md:hidden bg-dark-card border-b border-dark-border p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+      <div class="bg-gradient-to-tr from-brand-600 to-emerald-400 p-2 rounded-xl">
+        <i class="fa-solid fa-bolt text-white text-lg"></i>
+      </div>
+      <h1 class="font-bold text-lg text-white tracking-wide">FitSystem <span class="text-brand-500">Pro</span></h1>
     </div>
+    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> GitHub Storage
+    </span>
+  </header>
 
-    <!-- ABA 1: TREINO -->
-    <div id="tab-treino" class="tab-content active">
-        <div class="card">
-            <h2>📅 Planejamento Semanal (7 Dias Editáveis)</h2>
-            <div class="days-grid" id="daysGrid"></div>
-            <h3 id="currentDayTitle" style="font-size:15px; color:var(--accent); margin: 16px 0 8px 0;">Treino de Segunda-feira</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:65px">Ref.</th>
-                        <th>Exercício (Mude para testar a imagem)</th>
-                        <th style="width:75px">Séries</th>
-                        <th style="width:95px">Repetições</th>
-                        <th style="width:95px">Carga (kg)</th>
-                        <th style="width:40px"></th>
-                    </tr>
-                </thead>
-                <tbody id="exerciseTableBody"></tbody>
-            </table>
-            <button class="btn mt-3" onclick="addExercise()">+ Adicionar Exercício</button>
+  <!-- Navigation Sidebar (Desktop & Mobile Bottom Bar) -->
+  <aside class="fixed md:static bottom-0 left-0 right-0 bg-dark-card/95 backdrop-blur-md md:backdrop-blur-none border-t md:border-t-0 md:border-r border-dark-border w-full md:w-64 z-50 flex md:flex-col justify-between p-2 md:p-6 transition-all duration-300">
+    <div>
+      <!-- Desktop Brand Logo -->
+      <div class="hidden md:flex items-center gap-3 mb-8 px-2">
+        <div class="bg-gradient-to-tr from-brand-600 to-emerald-400 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-bolt text-white text-xl"></i>
         </div>
+        <div>
+          <h1 class="font-bold text-xl text-white tracking-wide">FitSystem <span class="text-brand-500">Pro</span></h1>
+          <p class="text-xs text-gray-400">Personal Dashboard</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex md:flex-col justify-around md:justify-start gap-1 md:gap-2">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-brand-500 bg-brand-500/10 border border-brand-500/20 w-full">
+          <i class="fa-solid fa-chart-pie text-base"></i>
+          <span>Visão Geral</span>
+        </button>
+        <button onclick="switchTab('workout')" id="nav-workout" class="nav-btn flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-dark-border/50 w-full">
+          <i class="fa-solid fa-dumbbell text-base"></i>
+          <span>Treinos</span>
+        </button>
+        <button onclick="switchTab('nutrition')" id="nav-nutrition" class="nav-btn flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-dark-border/50 w-full">
+          <i class="fa-solid fa-utensils text-base"></i>
+          <span>Nutrição</span>
+        </button>
+        <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn flex flex-col md:flex-row items-center gap-1.5 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-dark-border/50 w-full">
+          <i class="fa-solid fa-file-invoice text-base"></i>
+          <span>Relatórios</span>
+        </button>
+      </nav>
     </div>
 
-    <!-- ABA 2: NUTRIÇÃO -->
-    <div id="tab-nutricao" class="tab-content">
-        <div class="card">
-            <h2>🥗 Calculadora Nutricional Inteligente</h2>
-            <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">Digite qualquer alimento (ex: frango, arroz, aveia, ovos, pão...) e a quantidade em gramas.</p>
-            <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; align-items: end;">
-                <div>
-                    <label style="font-size:12px; font-weight:600;">Alimento</label>
-                    <input type="text" id="foodInput" placeholder="Ex: Peito de Frango">
-                </div>
-                <div>
-                    <label style="font-size:12px; font-weight:600;">Qtd (g / ml)</label>
-                    <input type="number" id="foodAmount" value="150" min="1">
-                </div>
-                <button class="btn" onclick="addFoodItem()">Adicionar</button>
+    <!-- Desktop Footer Info -->
+    <div class="hidden md:block pt-6 border-t border-dark-border">
+      <div class="bg-dark-input p-3.5 rounded-xl border border-dark-border">
+        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+          <span>Storage Status</span>
+          <span class="text-emerald-400 font-semibold">Local OK</span>
+        </div>
+        <div class="w-full bg-dark-bg rounded-full h-1.5">
+          <div class="bg-emerald-400 h-1.5 rounded-full" style="width: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 p-4 md:p-8 mb-16 md:mb-0 max-w-7xl mx-auto w-full">
+    
+    <!-- 1. DASHBOARD SECTION -->
+    <section id="sec-dashboard" class="space-y-6">
+      
+      <!-- Top Bar Greeting & Goals -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-dark-card to-dark-border/40 p-6 rounded-2xl border border-dark-border">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Olá, Atleta! 👋</h2>
+          <p class="text-gray-400 text-sm mt-1">Acompanhe seu progresso e metas diárias em tempo real.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openWeightModal()" class="px-4 py-2.5 bg-dark-input hover:bg-dark-border text-white text-sm font-medium rounded-xl border border-dark-border transition-all flex items-center gap-2">
+            <i class="fa-solid fa-weight-scale text-brand-500"></i> Registrar Peso
+          </button>
+        </div>
+      </div>
+
+      <!-- Metrics Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Calorias -->
+        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Calorias Hoje</span>
+            <div class="p-2.5 bg-orange-500/10 rounded-xl text-orange-400">
+              <i class="fa-solid fa-fire text-lg"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="dash-calories" class="text-3xl font-bold text-white">0</span>
+            <span class="text-sm text-gray-400">/ 2500 kcal</span>
+          </div>
+          <div class="w-full bg-dark-bg rounded-full h-2 mt-4 overflow-hidden">
+            <div id="dash-calories-bar" class="bg-gradient-to-r from-orange-500 to-amber-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Proteínas -->
+        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Proteínas Hoje</span>
+            <div class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400">
+              <i class="fa-solid fa-drumstick-bite text-lg"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="dash-protein" class="text-3xl font-bold text-white">0</span>
+            <span class="text-sm text-gray-400">/ 160 g</span>
+          </div>
+          <div class="w-full bg-dark-bg rounded-full h-2 mt-4 overflow-hidden">
+            <div id="dash-protein-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Treinos Salvos -->
+        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Treinos Registrados</span>
+            <div class="p-2.5 bg-brand-500/10 rounded-xl text-brand-400">
+              <i class="fa-solid fa-dumbbell text-lg"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="dash-workouts-count" class="text-3xl font-bold text-white">0</span>
+            <span class="text-sm text-gray-400">sessões</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Atualizado em tempo real</p>
+        </div>
+
+        <!-- Card 4: Peso Atual -->
+        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border relative overflow-hidden group hover:border-brand-500/50 transition-all">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Peso Corporal</span>
+            <div class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400">
+              <i class="fa-solid fa-weight-scale text-lg"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="dash-current-weight" class="text-3xl font-bold text-white">--</span>
+            <span class="text-sm text-gray-400">kg</span>
+          </div>
+          <p id="dash-weight-diff" class="text-xs text-emerald-400 mt-4 flex items-center gap-1">
+            <i class="fa-solid fa-chart-line"></i> Histórico em gráfico
+          </p>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Weight Trend Chart -->
+        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-brand-500"></i> Evolução de Peso Corporal
+            </h3>
+            <span class="text-xs text-gray-400">Últimos registros</span>
+          </div>
+          <div class="h-64 w-full">
+            <canvas id="weightChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Volume / Cargas Progress Chart -->
+        <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-bolt text-amber-400"></i> Progresso de Cargas Principais
+            </h3>
+            <span class="text-xs text-gray-400">Kg por exercício</span>
+          </div>
+          <div class="h-64 w-full">
+            <canvas id="workoutChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. WORKOUT SECTION -->
+    <section id="sec-workout" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Diário de Treino 🏋️</h2>
+          <p class="text-gray-400 text-sm mt-1">Registre novos exercícios e acompanhe sua evolução de carga.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Workout Form -->
+        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border h-fit">
+          <h3 class="font-semibold text-white text-lg mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-plus-circle text-brand-500"></i> Novo Exercício
+          </h3>
+          <form id="workout-form" onsubmit="handleSaveWorkout(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Exercício</label>
+              <input type="text" id="w-name" placeholder="Ex: Supino Reto, Agachamento..." required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-500 transition-all">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Carga (kg)</label>
+                <input type="number" step="0.5" id="w-load" placeholder="Ex: 80" required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-500 transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Séries</label>
+                <input type="number" id="w-sets" placeholder="Ex: 4" required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-500 transition-all">
+              </div>
             </div>
 
-            <h3 style="font-size:15px; margin:20px 0 10px 0;">Refeições Registradas Hoje:</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Alimento</th>
-                        <th>Qtd</th>
-                        <th>Kcal</th>
-                        <th>Prot</th>
-                        <th>Carb</th>
-                        <th>Gord</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="mealsTableBody"></tbody>
-            </table>
-
-            <div class="stats-grid">
-                <div class="stat-box"><span>Calorias</span><h3 id="sumCal">0 kcal</h3></div>
-                <div class="stat-box"><span>Proteínas</span><h3 id="sumProt">0g</h3></div>
-                <div class="stat-box"><span>Carboidratos</span><h3 id="sumCarb">0g</h3></div>
-                <div class="stat-box"><span>Gorduras</span><h3 id="sumGord">0g</h3></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Repetições</label>
+                <input type="text" id="w-reps" placeholder="Ex: 8-10" required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-500 transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Categoria</label>
+                <select id="w-category" class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-500 transition-all">
+                  <option value="Peito">Peito</option>
+                  <option value="Costas">Costas</option>
+                  <option value="Pernas">Pernas</option>
+                  <option value="Ombros">Ombros</option>
+                  <option value="Braços">Braços</option>
+                  <option value="Core">Core</option>
+                </select>
+              </div>
             </div>
-        </div>
-    </div>
 
-    <!-- ABA 3: PESO & MEDIDAS -->
-    <div id="tab-medidas" class="tab-content">
-        <div class="card">
-            <h2>⚖️ Registro Corporal</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
-                <div>
-                    <label style="font-size:12px; font-weight:600;">Data</label>
-                    <input type="date" id="measureDate">
-                </div>
-                <div>
-                    <label style="font-size:12px; font-weight:600;">Peso Atual (kg)</label>
-                    <input type="number" id="measureWeight" step="0.1" placeholder="120.0">
-                </div>
-                <button class="btn" onclick="addMeasurement()">Salvar Peso</button>
+            <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/20 transition-all text-sm flex items-center justify-center gap-2">
+              <i class="fa-solid fa-save"></i> Salvar Exercício
+            </button>
+          </form>
+        </div>
+
+        <!-- Workout History Table -->
+        <div class="lg:col-span-2 bg-dark-card p-6 rounded-2xl border border-dark-border flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-semibold text-white text-lg flex items-center gap-2">
+                <i class="fa-solid fa-history text-brand-500"></i> Histórico de Cargas
+              </h3>
+              <span id="workout-count-badge" class="text-xs bg-dark-input border border-dark-border text-gray-300 px-3 py-1 rounded-full">0 registros</span>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-left text-sm text-gray-300">
+                <thead class="bg-dark-input/50 text-xs text-gray-400 uppercase">
+                  <tr>
+                    <th class="p-3 rounded-l-xl">Data</th>
+                    <th class="p-3">Exercício</th>
+                    <th class="p-3">Categoria</th>
+                    <th class="p-3">Série x Reps</th>
+                    <th class="p-3">Carga</th>
+                    <th class="p-3 text-right rounded-r-xl">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="workout-table-body" class="divide-y divide-dark-border">
+                  <!-- Dynamic Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. NUTRITION SECTION -->
+    <section id="sec-nutrition" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Controle Nutricional 🥗</h2>
+          <p class="text-gray-400 text-sm mt-1">Registre suas refeições e acompanhe calorias e macros.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Nutrition Form -->
+        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border h-fit">
+          <h3 class="font-semibold text-white text-lg mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-utensils text-emerald-400"></i> Registrar Refeição
+          </h3>
+          <form id="nutrition-form" onsubmit="handleSaveMeal(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Refeição / Alimento</label>
+              <input type="text" id="n-meal" placeholder="Ex: Almoço, Shake Pós-Treino..." required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500 transition-all">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Calorias (kcal)</label>
+                <input type="number" id="n-calories" placeholder="Ex: 550" required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500 transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Proteína (g)</label>
+                <input type="number" id="n-protein" placeholder="Ex: 40" required class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500 transition-all">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Recurso / Benefício</label>
+              <select id="n-source" class="w-full bg-dark-input border border-dark-border rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500 transition-all">
+                <option value="VA/VR">Vale Alimentação / Refeição (VA/VR)</option>
+                <option value="Próprio">Recurso Próprio</option>
+                <option value="Suplementação">Suplementação</option>
+              </select>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-semibo class="btn" onclick="addMeasurement()">Salvar Peso</button>
             </div>
 
             <h3 style="font-size:15px; margin:20px 0 10px 0;">Histórico Registrado:</h3>
